@@ -52,7 +52,6 @@ export class AppComponent {
 
     console.log(this.newPage.number + " " + this.newPage.type);
   }
-
   checkValue(): boolean {
     let i:number;
     
@@ -66,9 +65,18 @@ export class AppComponent {
     }
     
     return false;
-
+  }
+  checkLeastUsed(): void {
+    let i:number;
+    for ( i = 0; i < this.memoria.length - 1; i++) {
+      if( this.memoria[i].number < this.memoria[i+1].number) {
+        this.replaceIndex = i; 
+        break;
+      }
+    }
   }
     
+  // function to generate and push new page to memory randomly
   randomMemory(): void {
     this.generateValue();
 
@@ -83,7 +91,7 @@ export class AppComponent {
       this.memoria[index].type = this.newPage.type;
     }
   }
-
+  // function to generate and push new page to memory as first in first out
   fifoMemory(): void {
     this.generateValue();
 
@@ -114,8 +122,46 @@ export class AppComponent {
     }
 
   }
+  // function to generate and push new page to memory as first in first out
+  lfuMemory(): void {
+    this.generateValue();
 
+    if( this.entry != this.memorySize ) {
+      if ( this.checkValue() ) {
+        this.memoria[this.replaceIndex].count++;
+        console.log(this.memoria);
+        console.log("hit");
 
+      }
+      else {
+        this.memoria[this.entry].number = this.newPage.number;
+        this.memoria[this.entry].count = 0;
+        this.memoria[this.entry].type = this.newPage.type;
+        this.entry++;
+        console.log(this.memoria);
+
+      }
+    }
+    else {
+
+      if ( this.checkValue() ) {
+        this.memoria[this.replaceIndex].count++;
+        console.log(this.memoria);
+        console.log("hit");
+
+      }
+      else {
+        this.checkLeastUsed();
+
+        this.memoria[this.replaceIndex].number = this.newPage.number;
+        this.memoria[this.replaceIndex].count = 0;
+        this.memoria[this.replaceIndex].type = this.newPage.type;
+        console.log(this.memoria);
+
+      }
+    }
+
+  }
 
 
 
@@ -128,6 +174,13 @@ export class AppComponent {
   generateFIFOMemory(): void {
     for (let index = 0; index < 20; index++) {
       this.fifoMemory();  
+      // console.log(index)  
+    }
+    this.showConsole();
+  }
+  generateLFUMemory(): void {
+    for (let index = 0; index < 20; index++) {
+      this.lfuMemory();  
       // console.log(index)  
     }
     this.showConsole();
