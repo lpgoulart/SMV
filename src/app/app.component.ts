@@ -80,7 +80,6 @@ export class AppComponent {
     }
   }
 
-
   fifoMemory(): void {
     if( this.entry == this.memorySize ) {
       this.entry = 0;
@@ -90,15 +89,15 @@ export class AppComponent {
       // console.log(this.newPage.number);
   
       if ( this.checkValue() ) {
-        console.log("tem");
+        // console.log("tem");
         this.memoria[this.replaceIndex].count++;
   
       }
       else {
-        console.log("nao");
-        console.log("new page number: " + this.newPage.number);
+        // console.log("nao");
+        // console.log("new page number: " + this.newPage.number);
   
-        console.log("index to replace: " + this.entry);
+        // console.log("index to replace: " + this.entry);
         this.memoria[this.entry].number = this.newPage.number;
         this.memoria[this.entry].count = 0;
         this.entry++;
@@ -109,16 +108,22 @@ export class AppComponent {
 
 
 
+
   generateRandomMemory(): void {
     for (let index = 0; index < 50; index++) {
       this.randomMemory();      
     }
+    this.showConsole();
   }
   generateFIFOMemory(): void {
     for (let index = 0; index < 50; index++) {
-      this.fifoMemory();    
-      // console.log(index)  
+      this.fifoMemory();     
     }
+    this.showConsole();
+  }
+  cleanMemory(): void {
+    this.ngOnInit();
+    this.showConsole();
   }
 
 }
