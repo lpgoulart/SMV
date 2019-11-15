@@ -19,3 +19,24 @@
 <button (click)="cleanMemory()">
   clear memory
 </button>
+
+<br><br>
+
+<div style="display: inline-flex">
+  <div *ngFor="let data of memoria">
+    <div style="border: 1px black solid; padding: 5px">
+      {{data.number}}
+    </div>
+    <div style="border: 1px black solid; padding: 5px">
+      {{data.count}}
+    </div>
+  </div>
+  <div>
+    <div style="border: 1px black solid; padding: 5px">
+      n Pagina
+    </div>
+    <div style="border: 1px black solid; padding: 5px">
+      contador
+    </div>
+  </div>
+</div>
