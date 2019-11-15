@@ -16,7 +16,7 @@
 
 <br><br>
 
-<button (click)="lruMemory()">
+<button (click)="generateLRUMemory()">
   lru console
 </button>
 
@@ -54,8 +54,19 @@
       {{data.type}}
     </div>
     <div class="display">
-      {{data.time | date:'ss'}}
+      {{data.time | date:'ss:SSS'}}
     </div>
   </div>
 
 </div>
+
+<br><br>
+
+hits: {{hitPage}} - misses: {{missPage}}
+
+<p>
+  hit: {{hitPage/loop*100}}%
+</p>
+<p>
+  miss: {{missPage/loop*100}}%
+</p>
