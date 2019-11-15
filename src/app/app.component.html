@@ -16,6 +16,12 @@
 
 <br><br>
 
+<button (click)="lruMemory()">
+  lru console
+</button>
+
+<br><br>
+
 <button (click)="cleanMemory()">
   clear memory
 </button>
@@ -23,20 +29,41 @@
 <br><br>
 
 <div style="display: inline-flex">
+  <div>
+    <div class="display">
+      nPages
+    </div>
+    <div class="display">
+      counter
+    </div>
+    <div class="display">
+      type
+    </div>
+    <div class="display">
+      time
+    </div>
+  </div>
   <div *ngFor="let data of memoria">
-    <div style="border: 1px black solid; padding: 5px">
+    <div class="display">
       {{data.number}}
     </div>
-    <div style="border: 1px black solid; padding: 5px">
+    <div class="display">
       {{data.count}}
     </div>
-  </div>
-  <div>
-    <div style="border: 1px black solid; padding: 5px">
-      n Pagina
+    <div class="display">
+      {{data.type}}
     </div>
-    <div style="border: 1px black solid; padding: 5px">
-      contador
+    <div class="display">
+      {{data.time | date:'ss'}}
     </div>
   </div>
+
 </div>
+
+<br><br>
+
+<button (click)="test()">
+  test
+</button>
+
+{{time | date:'mm:ss'}}

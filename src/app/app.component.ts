@@ -4,6 +4,7 @@ interface Memoria {
   number: number;
   count: number;
   type: string;
+  time: number;
 }
 
 @Component({
@@ -19,20 +20,28 @@ export class AppComponent {
   memoria: Memoria[] = [];
   replaceIndex: number;
   entry: number;
-  newPage = { 'number': 0, 'count': 0, 'type': "" };
+  newPage = { 'number': 0, 'count': 0, 'type': "", "time": 0 };
+  time: number;
 
   ngOnInit() {
     for (let i = 0; i < this.memorySize; i++) {
       this.memoria.push({
         number: -1,
         count: 0,
-        type: "EMPTY"
+        type: "EMPTY",
+        time: 0
       });
     }
     this.newPage.number=0;
     this.newPage.count =0; 
     this.entry = 0;
     this.replaceIndex = 0;
+    this.time = Date.now();
+  }
+
+  test(): void {
+    let now = Date.now();
+    this.time = now - this.time;
   }
   
   
@@ -49,8 +58,9 @@ export class AppComponent {
     this.newPage.number = (Math.floor(Math.random() * (10 - 0 + 1)) + 0);
     this.newPage.count = 0;
     this.newPage.type = (Math.floor(Math.random() * (1 - 0 + 1)) + 0) ? "R" : "W";
+    this.newPage.time = Date.now();
+    console.log(this.newPage)
 
-    console.log(this.newPage.number + " " + this.newPage.type);
   }
   checkValue(): boolean {
     let i:number;
@@ -72,6 +82,20 @@ export class AppComponent {
       if( this.memoria[i].number < this.memoria[i+1].number) {
         this.replaceIndex = i; 
         break;
+      }
+    }
+  }
+  // adjust? 
+  checkLastUsed(): void {
+    let i:number;
+    let now:number;
+
+    for ( i = 0; i < this.memoria.length - 1; i++) {
+      now = Date.now();
+      this.memoria[i].time -= now;
+      let nextTime = this.memoria[i+1].time -= now;
+      if( this.memoria[i].time < nextTime ) {
+        this.replaceIndex = i; 
       }
     }
   }
@@ -156,6 +180,50 @@ export class AppComponent {
         this.memoria[this.replaceIndex].number = this.newPage.number;
         this.memoria[this.replaceIndex].count = 0;
         this.memoria[this.replaceIndex].type = this.newPage.type;
+        console.log(this.memoria);
+
+      }
+    }
+
+  }
+  // function to generate and push new page to memory as first in first out ---- adjust??
+  lruMemory(): void {
+    this.generateValue();
+
+    if( this.entry != this.memorySize ) {
+      if ( this.checkValue() ) {
+        this.memoria[this.replaceIndex].count++;
+        this.memoria[this.entry].time = this.newPage.time;
+        console.log(this.memoria);
+        console.log("hit");
+
+      }
+      else {
+        this.memoria[this.entry].number = this.newPage.number;
+        this.memoria[this.entry].count = 0;
+        this.memoria[this.entry].type = this.newPage.type;
+        this.memoria[this.entry].time = this.newPage.time;
+        this.entry++;
+        console.log(this.memoria);
+
+      }
+    }
+    else {
+
+      if ( this.checkValue() ) {
+        this.memoria[this.replaceIndex].count++;
+        this.memoria[this.replaceIndex].time = this.newPage.time;
+        console.log(this.memoria);
+        console.log("hit");
+
+      }
+      else {
+        this.checkLastUsed();
+
+        this.memoria[this.replaceIndex].number = this.newPage.number;
+        this.memoria[this.replaceIndex].count = 0;
+        this.memoria[this.replaceIndex].type = this.newPage.type;
+        this.memoria[this.replaceIndex].time = this.newPage.time;
         console.log(this.memoria);
 
       }
