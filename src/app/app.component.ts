@@ -25,6 +25,7 @@ export class AppComponent {
   loop: number;
   write: number;
   read: number;
+  pageSize: number;
 
   hitPage: number;
   missPage: number;
@@ -45,7 +46,8 @@ export class AppComponent {
     this.time = Date.now();
     this.hitPage = 0;
     this.missPage = 0;
-    this.loop = 20;
+    this.loop = 20000;
+    this.pageSize = 4;
     this.read = 0;
     this.write = 0;
   }
@@ -60,7 +62,7 @@ export class AppComponent {
 
   generateValue(): void {
     
-    this.newPage.number = (Math.floor(Math.random() * (10 - 0 + 1)) + 0);
+    this.newPage.number = (Math.floor(Math.random() * (100 - 0 + 1)) + 0);
     this.newPage.count = 0;
     this.newPage.type = (Math.floor(Math.random() * (1 - 0 + 1)) + 0) ? "R" : "W";
     this.newPage.time = Date.now();
@@ -86,9 +88,8 @@ export class AppComponent {
   checkLeastUsed(): void {
     let i:number;
     for ( i = 0; i < this.memoria.length - 1; i++) {
-      if( this.memoria[i].number < this.memoria[i+1].number) {
+      if( this.memoria[i].count < this.memoria[i+1].count) {
         this.replaceIndex = i; 
-        break;
       }
     }
   }
@@ -112,8 +113,10 @@ export class AppComponent {
   // function to generate and push new page to memory randomly
   randomMemory(): void {
     this.generateValue();
+    let modulo: number;
+    modulo = Math.floor(this.newPage.number/this.pageSize);
 
-    let index: number = (this.newPage.number + 5) % this.memorySize;
+    let index: number = modulo % this.memorySize;
 
     if ( this.checkValue() ) {
       this.memoria[this.replaceIndex].count++;
@@ -126,6 +129,7 @@ export class AppComponent {
       this.missPage++;
     }
   }
+
   // function to generate and push new page to memory as first in first out
   fifoMemory(): void {
     this.generateValue();
@@ -134,6 +138,7 @@ export class AppComponent {
       this.entry = 0;
       if ( this.checkValue() ) {
         this.memoria[this.replaceIndex].count++;
+        this.entry++;
         this.hitPage++;
       }
       else {
@@ -159,7 +164,9 @@ export class AppComponent {
     }
 
   }
-  // function to generate and push new page to memory as first in first out
+
+
+  // function to generate and push new page to memory as least frequently used
   lfuMemory(): void {
     this.generateValue();
 
@@ -199,7 +206,9 @@ export class AppComponent {
     }
 
   }
-  // function to generate and push new page to memory as first in first out 
+
+
+  // function to generate and push new page to memory as least recently used 
   lruMemory(): void {
     this.generateValue();
 
