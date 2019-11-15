@@ -38,12 +38,6 @@ export class AppComponent {
     this.replaceIndex = 0;
     this.time = Date.now();
   }
-
-  test(): void {
-    let now = Date.now();
-    this.time = now - this.time;
-  }
-  
   
   showConsole(): void {
     for (let i = 0; i < this.memorySize; i++) {
@@ -59,7 +53,7 @@ export class AppComponent {
     this.newPage.count = 0;
     this.newPage.type = (Math.floor(Math.random() * (1 - 0 + 1)) + 0) ? "R" : "W";
     this.newPage.time = Date.now();
-    console.log(this.newPage)
+    // console.log(this.newPage)
 
   }
   checkValue(): boolean {
@@ -99,7 +93,6 @@ export class AppComponent {
       }
     }
   }
-    
   // function to generate and push new page to memory randomly
   randomMemory(): void {
     this.generateValue();
@@ -258,6 +251,7 @@ export class AppComponent {
       this.memoria[i].number = -1;
       this.memoria[i].count = 0;
       this.memoria[i].type = "";
+      this.memoria[i].time = 0;
     }
     this.entry = 0;
     this.showConsole();
