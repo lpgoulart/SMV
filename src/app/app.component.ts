@@ -88,7 +88,6 @@ export class AppComponent {
     }
   }
 
-  // adjust? 
   checkLastUsed(): void {
     let i:number;
     let now:number;
@@ -201,7 +200,7 @@ export class AppComponent {
     }
 
   }
-  // function to generate and push new page to memory as first in first out ---- adjust??
+  // function to generate and push new page to memory as first in first out 
   lruMemory(): void {
     this.generateValue();
 
