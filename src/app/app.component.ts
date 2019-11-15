@@ -23,6 +23,8 @@ export class AppComponent {
   newPage = { 'number': 0, 'count': 0, 'type': "", "time": 0 };
   time: number;
   loop: number;
+  write: number;
+  read: number;
 
   hitPage: number;
   missPage: number;
@@ -44,6 +46,8 @@ export class AppComponent {
     this.hitPage = 0;
     this.missPage = 0;
     this.loop = 20;
+    this.read = 0;
+    this.write = 0;
   }
   
   showConsole(): void {
@@ -60,9 +64,10 @@ export class AppComponent {
     this.newPage.count = 0;
     this.newPage.type = (Math.floor(Math.random() * (1 - 0 + 1)) + 0) ? "R" : "W";
     this.newPage.time = Date.now();
-    // console.log(this.newPage)
+    this.newPage.type == "R" ? this.read++ : this.write++;
 
   }
+
   checkValue(): boolean {
     let i:number;
     
@@ -137,7 +142,6 @@ export class AppComponent {
         this.memoria[this.entry].type = this.newPage.type;
         this.entry++;
         this.missPage++;
-        console.log(this.entry)
       }
     }
     else {
@@ -151,7 +155,6 @@ export class AppComponent {
         this.memoria[this.entry].type = this.newPage.type;
         this.entry++;
         this.missPage++;
-        console.log(this.entry)
       }
     }
 
@@ -164,7 +167,6 @@ export class AppComponent {
       if ( this.checkValue() ) {
         this.memoria[this.replaceIndex].count++;
         this.hitPage++;
-        console.log(this.memoria);
         console.log("hit");
 
       }
@@ -174,7 +176,6 @@ export class AppComponent {
         this.memoria[this.entry].type = this.newPage.type;
         this.entry++;
         this.missPage++;
-        console.log(this.memoria);
 
       }
     }
@@ -183,7 +184,6 @@ export class AppComponent {
       if ( this.checkValue() ) {
         this.memoria[this.replaceIndex].count++;
         this.hitPage++;
-        console.log(this.memoria);
         console.log("hit");
 
       }
@@ -194,7 +194,6 @@ export class AppComponent {
         this.memoria[this.replaceIndex].count = 0;
         this.memoria[this.replaceIndex].type = this.newPage.type;
         this.missPage++;
-        console.log(this.memoria);
 
       }
     }
@@ -229,7 +228,6 @@ export class AppComponent {
         this.memoria[this.replaceIndex].time = this.newPage.time;
         this.hitPage++;
         console.log("hit");
-        // console.log(this.memoria);
 
       }
       else {
@@ -240,8 +238,6 @@ export class AppComponent {
         this.memoria[this.replaceIndex].type = this.newPage.type;
         this.memoria[this.replaceIndex].time = this.newPage.time;
         this.missPage++;
-        console.log(this.replaceIndex);
-        // console.log(this.memoria);
 
       }
     }
@@ -260,24 +256,21 @@ export class AppComponent {
   generateFIFOMemory(): void {
     this.cleanMemory();
     for (let index = 0; index < this.loop; index++) {
-      this.fifoMemory();  
-      // console.log(index)  
+      this.fifoMemory();   
     }
     this.showConsole();
   }
   generateLFUMemory(): void {
     this.cleanMemory();
     for (let index = 0; index < this.loop; index++) {
-      this.lfuMemory();  
-      // console.log(index)  
+      this.lfuMemory();   
     }
     this.showConsole();
   }
   generateLRUMemory(): void {
     this.cleanMemory();
     for (let index = 0; index < this.loop; index++) {
-      this.lruMemory();  
-      // console.log(index)  
+      this.lruMemory();   
     }
     this.showConsole();
   }
@@ -291,6 +284,8 @@ export class AppComponent {
     this.entry = 0;
     this.hitPage = 0;
     this.missPage = 0;
+    this.read = 0;
+    this.write = 0;
     this.showConsole();
   }
 
