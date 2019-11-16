@@ -62,7 +62,7 @@ export class AppComponent {
 
   generateValue(): void {
     
-    this.newPage.number = (Math.floor(Math.random() * (100 - 0 + 1)) + 0);
+    this.newPage.number = (Math.floor(Math.random() * (10 - 0 + 1)) + 0);
     this.newPage.count = 0;
     this.newPage.type = (Math.floor(Math.random() * (1 - 0 + 1)) + 0) ? "R" : "W";
     this.newPage.time = Date.now();
@@ -104,6 +104,24 @@ export class AppComponent {
       let memoryTime = now - this.memoria[i].time;
       let nextTime = now - this.memoria[i+1].time;
       if( memoryTime > nextTime ) {
+        this.replaceIndex = i; 
+      }
+    }
+  }
+
+  checkZeroCount(): void {
+    let i:number;
+    let minor: number;
+    let storedMinor: number = 99999999999;
+
+    for ( i = 0; i < this.memoria.length; i++) {
+      if( this.memoria[i].count < storedMinor ){
+        storedMinor = this.memoria[i].count;
+      } 
+    }
+
+    for ( i = 0; i < this.memoria.length; i++) {
+      if( this.memoria[i].count == storedMinor) {
         this.replaceIndex = i; 
       }
     }
@@ -251,6 +269,52 @@ export class AppComponent {
       }
     }
 
+  }
+  
+
+
+  nruMemory(): void {
+    this.generateValue(); 
+
+    if( this.entry != this.memorySize ) {
+      if ( this.checkValue() ) {
+        this.memoria[this.replaceIndex].count++;
+        this.memoria[this.entry].time = this.newPage.time;
+        this.hitPage++;
+        console.log("hit");
+
+      }
+      else {
+        this.memoria[this.entry].number = this.newPage.number;
+        this.memoria[this.entry].count = 0;
+        this.memoria[this.entry].type = this.newPage.type;
+        this.memoria[this.entry].time = this.newPage.time;
+        this.entry++;
+        this.missPage++;
+
+      }
+    }
+    else {
+      this.checkZeroCount()
+
+      if ( this.checkValue() ) {
+        this.memoria[this.replaceIndex].count++;
+        this.memoria[this.replaceIndex].time = this.newPage.time;
+        this.hitPage++;
+        console.log("hit");
+
+      }
+      else {
+        // this.checkZeroCount();
+
+        this.memoria[this.replaceIndex].number = this.newPage.number;
+        this.memoria[this.replaceIndex].count = 0;
+        this.memoria[this.replaceIndex].type = this.newPage.type;
+        this.memoria[this.replaceIndex].time = this.newPage.time;
+        this.missPage++;
+
+      }
+    }
   }
 
 
