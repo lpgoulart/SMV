@@ -347,6 +347,13 @@ export class AppComponent {
     }
     this.showConsole();
   }
+  generateNRUMemory(): void {
+    this.cleanMemory();
+    for (let index = 0; index < this.loop; index++) {
+      this.nruMemory();   
+    }
+    this.showConsole();
+  }
   cleanMemory(): void {
     for (let i = 0; i < this.memorySize; i++) {
       this.memoria[i].number = -1;
