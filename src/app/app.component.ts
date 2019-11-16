@@ -46,7 +46,7 @@ export class AppComponent {
     this.time = Date.now();
     this.hitPage = 0;
     this.missPage = 0;
-    this.loop = 20000;
+    this.loop = 20;
     this.pageSize = 4;
     this.read = 0;
     this.write = 0;
@@ -62,7 +62,7 @@ export class AppComponent {
 
   generateValue(): void {
     
-    this.newPage.number = (Math.floor(Math.random() * (10 - 0 + 1)) + 0);
+    this.newPage.number = (Math.floor(Math.random() * (100 - 0 + 1)) + 0);
     this.newPage.count = 0;
     this.newPage.type = (Math.floor(Math.random() * (1 - 0 + 1)) + 0) ? "R" : "W";
     this.newPage.time = Date.now();
@@ -131,10 +131,10 @@ export class AppComponent {
   // function to generate and push new page to memory randomly
   randomMemory(): void {
     this.generateValue();
-    let modulo: number;
-    modulo = Math.floor(this.newPage.number/this.pageSize);
+    // let modulo: number;
+    // modulo = (this.newPage.number/this.pageSize);
 
-    let index: number = modulo % this.memorySize;
+    let index: number = this.newPage.number % this.memorySize;
 
     if ( this.checkValue() ) {
       this.memoria[this.replaceIndex].count++;
