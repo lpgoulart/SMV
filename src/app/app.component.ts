@@ -15,7 +15,7 @@ interface Memoria {
 
 export class AppComponent {
   title = 'smv-angular';
-
+ 
   memorySize: number = 10;
   memoria: Memoria[] = [];
   replaceIndex: number;
@@ -52,6 +52,9 @@ export class AppComponent {
     this.write = 0;
   }
   
+  /**
+  * Function to display and if a space in memory is empty set EMPTY as it`s type
+  */
   showConsole(): void {
     for (let i = 0; i < this.memorySize; i++) {
       if( this.memoria[i].number == -1 )
