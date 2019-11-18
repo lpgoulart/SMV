@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 
+/**
+ * Interface to represent a memory
+ */
 interface Memoria {
   number: number;
   count: number;
@@ -30,6 +33,10 @@ export class AppComponent {
   hitPage: number;
   missPage: number;
 
+
+  /**
+   * Initialize some variables and an empty memory
+   */
   ngOnInit() {
     for (let i = 0; i < this.memorySize; i++) {
       this.memoria.push({
@@ -46,7 +53,7 @@ export class AppComponent {
     this.time = Date.now();
     this.hitPage = 0;
     this.missPage = 0;
-    this.loop = 20;
+    this.loop = 20000;
     this.pageSize = 4;
     this.read = 0;
     this.write = 0;
@@ -63,6 +70,9 @@ export class AppComponent {
     console.log( this.memoria );
   }
 
+  /**
+   * Generate a new page to insert in memory
+   */
   generateValue(): void {
     
     this.newPage.number = (Math.floor(Math.random() * (100 - 0 + 1)) + 0);
@@ -73,6 +83,11 @@ export class AppComponent {
 
   }
 
+  /**
+   * Check if a page exists in memory comparing the number and type of the page
+   * 
+   * @return boolean 
+   */
   checkValue(): boolean {
     let i:number;
     
@@ -88,15 +103,34 @@ export class AppComponent {
     return false;
   }
 
+  /**
+   * Check the least used page by comparing the counter of each page with the next till the end of memory
+   * 
+   * First find the lowest counter number then replace the page with a new one
+   */
   checkLeastUsed(): void {
     let i:number;
-    for ( i = 0; i < this.memoria.length - 1; i++) {
-      if( this.memoria[i].count < this.memoria[i+1].count) {
+    let minor: number;
+    let storedMinor: number = 99999999999;
+
+    for ( i = 0; i < this.memoria.length; i++) {
+      if( this.memoria[i].count < storedMinor ){
+        storedMinor = this.memoria[i].count;
+      } 
+    }
+
+    for ( i = 0; i < this.memoria.length; i++) {
+      if( this.memoria[i].count == storedMinor) {
         this.replaceIndex = i; 
       }
     }
   }
 
+  /**
+   * Check the last used page
+   * The function get the current time of each page and subtract by the time of creation of each page
+   * Then compare each one to see which has the bigger time and change it
+   */
   checkLastUsed(): void {
     let i:number;
     let now:number;
@@ -112,6 +146,9 @@ export class AppComponent {
     }
   }
 
+  /**
+   * Function to get all low used pages and change one randomly
+   */
   checkZeroCount(): void {
     let i:number;
     let minor: number;
@@ -130,12 +167,11 @@ export class AppComponent {
     }
   }
 
-
-  // function to generate and push new page to memory randomly
+  /**
+   * function to generate and push one new page to memory randomly
+   */
   randomMemory(): void {
     this.generateValue();
-    // let modulo: number;
-    // modulo = (this.newPage.number/this.pageSize);
 
     let index: number = this.newPage.number % this.memorySize;
 
@@ -151,7 +187,9 @@ export class AppComponent {
     }
   }
 
-  // function to generate and push new page to memory as first in first out
+  /**
+   * function to generate and push one new page to memory as first in first out
+   */
   fifoMemory(): void {
     this.generateValue();
 
@@ -186,8 +224,9 @@ export class AppComponent {
 
   }
 
-
-  // function to generate and push new page to memory as least frequently used
+  /**
+   * function to generate and push one new page to memory as least frequently used
+   */
   lfuMemory(): void {
     this.generateValue();
 
@@ -228,8 +267,9 @@ export class AppComponent {
 
   }
 
-
-  // function to generate and push new page to memory as least recently used 
+  /**
+   * function to generate and push one new page to memory as least recently used 
+   */
   lruMemory(): void {
     this.generateValue();
 
@@ -274,8 +314,9 @@ export class AppComponent {
 
   }
   
-
-
+  /**
+   * function to generate and push one new page to memory as not recently used 
+   */
   nruMemory(): void {
     this.generateValue(); 
 
@@ -320,8 +361,13 @@ export class AppComponent {
     }
   }
 
-
-
+  /**
+   * Call n times the random function to push a single page into memory
+   * 
+   * Clear memory before start pushing new pages into memory
+   * 
+   * Display the results on table
+   */
   generateRandomMemory(): void {
     this.cleanMemory();
     for (let index = 0; index < this.loop; index++) {
@@ -329,6 +375,14 @@ export class AppComponent {
     }
     this.showConsole();
   }
+
+  /**
+   * Call n times the FIFO function to push a single page into memory
+   * 
+   * Clear memory before start pushing new pages into memory
+   * 
+   * Display the results on table
+   */
   generateFIFOMemory(): void {
     this.cleanMemory();
     for (let index = 0; index < this.loop; index++) {
@@ -336,6 +390,14 @@ export class AppComponent {
     }
     this.showConsole();
   }
+
+  /**
+   * Call n times the LFU function to push a single page into memory
+   * 
+   * Clear memory before start pushing new pages into memory
+   * 
+   * Display the results on table
+   */
   generateLFUMemory(): void {
     this.cleanMemory();
     for (let index = 0; index < this.loop; index++) {
@@ -343,6 +405,14 @@ export class AppComponent {
     }
     this.showConsole();
   }
+
+  /**
+   * Call n times the LRU function to push a single page into memory
+   * 
+   * Clear memory before start pushing new pages into memory
+   * 
+   * Display the results on table
+   */
   generateLRUMemory(): void {
     this.cleanMemory();
     for (let index = 0; index < this.loop; index++) {
@@ -350,6 +420,14 @@ export class AppComponent {
     }
     this.showConsole();
   }
+
+  /**
+   * Call n times the NRU function to push a single page into memory
+   * 
+   * Clear memory before start pushing new pages into memory
+   * 
+   * Display the results on table
+   */
   generateNRUMemory(): void {
     this.cleanMemory();
     for (let index = 0; index < this.loop; index++) {
@@ -357,6 +435,10 @@ export class AppComponent {
     }
     this.showConsole();
   }
+
+  /**
+   * Clear memory
+   */
   cleanMemory(): void {
     for (let i = 0; i < this.memorySize; i++) {
       this.memoria[i].number = -1;
