@@ -1,32 +1,32 @@
-<button (click)="generateRandomMemory()">
+<button (click)="insertRandom()">
   random console
 </button>
 
 <br><br>
 
-<button (click)="generateFIFOMemory()">
+<button (click)="insertMemory()">
   fifo console
 </button>
 
 <br><br>
 
-<button (click)="generateLFUMemory()">
+<!-- <button (click)="generateLFUMemory()">
   lfu console
-</button>
+</button> -->
 
-<br><br>
+<!-- <br><br>
 
 <button (click)="generateLRUMemory()">
   lru console
-</button>
+</button> -->
 
-<br><br>
+<!-- <br><br>
 
 <button (click)="generateNRUMemory()">
   nru memory
 </button>
 
-<br><br>
+<br><br> -->
 
 <button (click)="cleanMemory()">
   clear memory
@@ -34,7 +34,7 @@
 
 <br><br>
 
-<div style="display: inline-flex">
+<div style="display:inline-flex">
   <div>
     <div class="display">
       nPages
@@ -51,7 +51,7 @@
   </div>
   <div *ngFor="let data of memoria">
     <div class="display">
-      {{data.number}}
+      {{data.bloco}}
     </div>
     <div class="display">
       {{data.count}}
@@ -62,6 +62,7 @@
     <div class="display">
       {{data.time | date:'ss:SSS'}}
     </div>
+    <!-- {{data | json}}, -->
   </div>
 
 </div>
@@ -83,6 +84,12 @@
 <p>
   hit: {{hitPage/loop*100}}%
 </p>
+
 <p>
   miss: {{missPage/loop*100}}%
 </p>
+
+<button (click)="nruMemory()">
+  file
+</button>
+
