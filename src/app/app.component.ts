@@ -412,9 +412,6 @@ export class AppComponent {
 
   }
 
-  /**
-   * Esta merda esta funcionando agora.
-   */
   checkValue(data: Memoria, index: number): boolean {
     let i:number;
    
