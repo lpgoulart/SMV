@@ -479,8 +479,8 @@ export class AppComponent {
   }
   insertRandom(): void {
     this.cleanMemory();
-    this.data = this.file01;
-    this.blockSize = 2;
+    this.data = this.file03;
+    this.blockSize = 8;
     for (let index = 0; index < this.loop; index++) {
       this.randomMemory();
     }
