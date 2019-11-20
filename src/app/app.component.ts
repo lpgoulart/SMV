@@ -22,6 +22,8 @@ export class AppComponent {
   title = 'smv-angular';
 
 
+  // changeble variables to get statistics
+  // Choose a file to insert
   file01: Memoria[] = [
     { "number": 0, "count": 0, "type": "W", "time": 1574117426640, "bloco": -1 },
     { "number": 1, "count": 0, "type": "R", "time": 1574117426865, "bloco": -1 },
@@ -228,7 +230,7 @@ export class AppComponent {
     { "number": 51, "count": 0, "type": "R", "time": 1574117817815, "bloco": -1 },
     { "number": 83, "count": 0, "type": "R", "time": 1574117817978, "bloco": -1 },
     { "number": 0, "count": 0, "type": "W", "time": 1574117818120, "bloco": -1 },
-    { "number": 56, "count": 0, "type": "W", "time": 1574117818366, "bloco": -1 },
+    { "number": 56, "count": 0, "type": "R", "time": 1574117818366, "bloco": -1 },
     { "number": 92, "count": 0, "type": "W", "time": 1574117818514, "bloco": -1 },
     { "number": 94, "count": 0, "type": "W", "time": 1574117818645, "bloco": -1 },
     { "number": 71, "count": 0, "type": "W", "time": 1574117818785, "bloco": -1 },
@@ -326,38 +328,27 @@ export class AppComponent {
     { "number": 30, "count": 0, "type": "W", "time": 1574117839625, "bloco": -1 },
   ];
 
+  data: Memoria[];
+  // choose the block size - number of pages ni each block  
+  blockSize:number;
+  // Choose the memory size
+  memorySize: number = 15;
 
-  blockSize:number = 4;
+
 
   blockInt: number;
-
-  memorySize: number = 10;
-
-
   memoria: Memoria[] = [];
-  
   replaceIndex: number;
-  
   entry: number;
-  
   newPage = { 'number': 0, 'count': 0, 'type': "", "time": 0 };
-  
   time: number;
-  
   loop: number;
-  
   write: number;
-  
   read: number;
-  
   pageSize: number;
-  
   file: Memoria[] = [];
-
   hitPage: number;
-  
   missPage: number;
-
   indice: number;
 
 
@@ -440,6 +431,8 @@ export class AppComponent {
       this.blockInt = Math.trunc(this.file03[this.replaceIndex].number/this.blockSize);
 
       index = this.blockInt % this.memorySize;
+
+      this.file03[this.replaceIndex].type == "R" ? this.read++ : this.write++;
       
       if ( this.checkValue(this.file03[this.replaceIndex], index) ) {
         
@@ -461,6 +454,29 @@ export class AppComponent {
     }
     else {
       this.replaceIndex = 0;
+
+      this.blockInt = Math.trunc(this.file03[this.replaceIndex].number/this.blockSize);
+
+      index = this.blockInt % this.memorySize;
+
+      this.file03[this.replaceIndex].type == "R" ? this.read++ : this.write++;
+      
+      if ( this.checkValue(this.file03[this.replaceIndex], index) ) {
+        
+        this.memoria[index].count++
+        this.hitPage++;
+
+      } else {
+
+        this.memoria[index].number = this.file03[this.replaceIndex].number;
+        this.memoria[index].bloco = this.blockInt;
+        this.memoria[index].count = 0;
+        this.memoria[index].type = this.file03[this.replaceIndex].type;
+        this.memoria[index].time = this.file03[this.replaceIndex].time;
+
+        this.missPage++;
+
+      } 
     }
 
   }
@@ -487,30 +503,32 @@ export class AppComponent {
   }
   fifoMemory(): void {
     let index: number;
+
+    this.data[this.indice].type == "R" ? this.read++ : this.write++;
     
     if( this.entry == this.memorySize ) {
       this.entry = 0;
     }
     else {
-      this.blockInt = Math.trunc(this.file01[this.indice].number/this.blockSize);
+      this.blockInt = Math.trunc(this.data[this.indice].number/this.blockSize);
 
       index = this.blockInt % this.memorySize;
 
-      if ( this.checkValueFIFO(this.file01[this.indice], index) ) {
+      if ( this.checkValueFIFO(this.data[this.indice], index) ) {
         this.memoria[this.replaceIndex].count++;
         this.hitPage++;
       }
       else {
-        this.memoria[this.entry].number = this.file01[this.indice].number;
+        this.memoria[this.entry].number = this.data[this.indice].number;
         this.memoria[this.entry].bloco = this.blockInt;
         this.memoria[this.entry].count = 0;
-        this.memoria[this.entry].type = this.file01[this.indice].type;
+        this.memoria[this.entry].type = this.data[this.indice].type;
         this.entry++;
         this.missPage++;
       }
     }
     
-    if(this.indice < this.file01.length - 1) {
+    if(this.indice < this.data.length - 1) {
       this.indice++;
     }
     else {
@@ -518,53 +536,171 @@ export class AppComponent {
     }
   }
   insertMemory(): void {
+    this.data = this.file03;
+    this.blockSize = 8;
     for (let index = 0; index < this.loop; index++) {
       this.fifoMemory();
     }
   }
 
-  /**
-   * Check the least used page by comparing the counter of each page with the next till the end of memory
-   * 
-   * First find the lowest counter number then replace the page with a new one
-   */
-  // checkLeastUsed(): void {
-  //   let i:number;
-  //   let minor: number;
-  //   let storedMinor: number = 99999999999;
 
-  //   for ( i = 0; i < this.memoria.length; i++) {
-  //     if( this.memoria[i].count < storedMinor ){
-  //       storedMinor = this.memoria[i].count;
-  //     } 
-  //   }
+  checkLeastUsed(): void {
+    let i:number;
+    let minor: number;
+    let storedMinor: number = 99999999999;
 
-  //   for ( i = 0; i < this.memoria.length; i++) {
-  //     if( this.memoria[i].count == storedMinor) {
-  //       this.replaceIndex = i; 
-  //     }
-  //   }
-  // }
+    for ( i = 0; i < this.memoria.length; i++) {
+      if( this.memoria[i].count < storedMinor ){
+        storedMinor = this.memoria[i].count;
+      } 
+    }
 
-  /**
-   * Check the last used page
-   * The function get the current time of each page and subtract by the time of creation of each page
-   * Then compare each one to see which has the bigger time and change it
-   */
-  // checkLastUsed(): void {
-  //   let i:number;
-  //   let now:number;
-  //   let memoryTime: number;
+    for ( i = 0; i < this.memoria.length; i++) {
+      if( this.memoria[i].count == storedMinor) {
+        this.replaceIndex = i; 
+      }
+    }
+  }
+  lfuMemory(): void {
 
-  //   for ( i = 0; i < this.memoria.length - 1; i++) {
-  //     now = Date.now();
-  //     let memoryTime = now - this.memoria[i].time;
-  //     let nextTime = now - this.memoria[i+1].time;
-  //     if( memoryTime > nextTime ) {
-  //       this.replaceIndex = i; 
-  //     }
-  //   }
-  // }
+    let index: number;
+
+    this.data[this.indice].type == "R" ? this.read++ : this.write++;
+    
+    this.blockInt = Math.trunc(this.data[this.indice].number/this.blockSize);
+
+    index = this.blockInt % this.memorySize;
+    
+    if( this.entry == this.memorySize ) {
+      this.checkLeastUsed();
+
+      if ( this.checkValueFIFO(this.data[this.indice], index) ) {
+        this.memoria[this.replaceIndex].count++;
+        this.hitPage++;
+      }
+      else {
+        this.memoria[this.replaceIndex].number = this.data[this.indice].number;
+        this.memoria[this.replaceIndex].bloco = this.blockInt;
+        this.memoria[this.replaceIndex].count = 0;
+        this.memoria[this.replaceIndex].type = this.data[this.indice].type;
+        this.missPage++;
+      }
+
+    }
+    else {
+      
+      if ( this.checkValueFIFO(this.data[this.indice], index) ) {
+        this.memoria[this.replaceIndex].count++;
+        this.hitPage++;
+      }
+      else {
+        this.memoria[this.entry].number = this.data[this.indice].number;
+        this.memoria[this.entry].bloco = this.blockInt;
+        this.memoria[this.entry].count = 0;
+        this.memoria[this.entry].type = this.data[this.indice].type;
+        this.entry++;
+        this.missPage++;
+      }
+    }
+    
+    if(this.indice < this.data.length - 1) {
+      this.indice++;
+    }
+    else {
+      this.indice = 0;
+    }
+
+  }
+  insertMemoryLFU(): void {
+    this.data = this.file03;
+    this.blockSize = 8;
+    for (let index = 0; index < this.loop; index++) {
+      this.lfuMemory();
+    }
+  }
+
+
+
+  checkLastUsed(): void {
+    let i:number;
+    let now:number;
+    let memoryTime: number;
+
+    for ( i = 0; i < this.memoria.length - 1; i++) {
+      now = Date.now();
+      let memoryTime = now - this.memoria[i].time;
+      let nextTime = now - this.memoria[i+1].time;
+      if( memoryTime > nextTime ) {
+        this.replaceIndex = i;
+      }
+    }
+  }
+  lruMemory(): void {
+    let index: number;
+
+    this.data[this.indice].type == "R" ? this.read++ : this.write++;
+    
+    this.blockInt = Math.trunc(this.data[this.indice].number/this.blockSize);
+
+    index = this.blockInt % this.memorySize;
+    
+    if( this.entry == this.memorySize ) {
+      this.checkLastUsed();
+
+      if ( this.checkValueFIFO(this.data[this.indice], index) ) {
+        this.memoria[this.replaceIndex].count++;
+        this.memoria[this.replaceIndex].time = this.data[this.indice].time;
+
+        this.hitPage++;
+      }
+      else {
+        this.memoria[this.replaceIndex].number = this.data[this.indice].number;
+        this.memoria[this.replaceIndex].bloco = this.blockInt;
+        this.memoria[this.replaceIndex].count = 0;
+        this.memoria[this.replaceIndex].type = this.data[this.indice].type;
+        this.memoria[this.replaceIndex].time = this.data[this.indice].time;
+
+        this.missPage++;
+      }
+
+    }
+    else {
+      
+      if ( this.checkValueFIFO(this.data[this.indice], index) ) {
+        this.memoria[this.replaceIndex].count++;
+        this.memoria[this.replaceIndex].time = this.data[this.indice].time;
+
+        this.hitPage++;
+      }
+      else {
+        this.memoria[this.entry].number = this.data[this.indice].number;
+        this.memoria[this.entry].bloco = this.blockInt;
+        this.memoria[this.entry].count = 0;
+        this.memoria[this.entry].type = this.data[this.indice].type;
+        this.memoria[this.replaceIndex].time = this.data[this.indice].time;
+
+        this.entry++;
+        this.missPage++;
+      }
+    }
+    
+    if(this.indice < this.data.length - 1) {
+      this.indice++;
+    }
+    else {
+      this.indice = 0;
+    }
+
+  }
+  insertMemoryLRU(): void {
+    this.cleanMemory();
+    this.data = this.file03;
+    this.blockSize = 8;
+    for (let index = 0; index < this.loop; index++) {
+      this.lruMemory();
+    }
+  }
+
 
   /**
    * Function to get all low used pages and change one randomly
@@ -587,172 +723,6 @@ export class AppComponent {
   //   }
   // }
 
-  /**
-   * function to generate and push one new page to memory randomly
-   */
-  // randomMemory(): void {
-  //   if( this.replaceIndex < this.file01.length ){
-  //     this.blockInt = Math.trunc(this.file01[this.replaceIndex].number/this.blockSize);
-
-  //     let index: number = this.blockInt % this.memorySize;
-
-  //     if ( this.checkValue(this.file01[index]) ) {
-  //       this.memoria[this.replaceIndex].count++;
-  //       this.hitPage++;
-  //     }
-  //     else {
-  //       this.memoria[index].number = this.file01[this.replaceIndex].number;
-  //       this.memoria[index].count = 0;
-  //       this.memoria[index].type = this.file01[this.replaceIndex].type;
-  //       this.missPage++;
-  //     }
-
-  //   }else {
-  //     this.replaceIndex = 0;
-      
-  //     this.blockInt = Math.trunc(this.file01[this.replaceIndex].number/this.blockSize);
-
-  //     let index: number = this.blockInt % this.memorySize;
-
-  //     if ( this.checkValue(this.file01[index]) ) {
-  //       this.memoria[this.replaceIndex].count++;
-  //       this.hitPage++;
-  //     }
-  //     else {
-  //       this.memoria[index].number = this.file01[this.replaceIndex].number;
-  //       this.memoria[index].count = 0;
-  //       this.memoria[index].type = this.file01[this.replaceIndex].type;
-  //       this.missPage++;
-  //     }
-  //   }    
-  // }
-
-  /**
-   * function to generate and push one new page to memory as first in first out
-   */
-  // fifoMemory(): void {
-  //   this.generateValue();
-
-  //   if( this.entry == this.memorySize ) {
-  //     this.entry = 0;
-  //     if ( this.checkValue() ) {
-  //       this.memoria[this.replaceIndex].count++;
-  //       this.entry++;
-  //       this.hitPage++;
-  //     }
-  //     else {
-  //       this.memoria[this.entry].number = this.newPage.number;
-  //       this.memoria[this.entry].count = 0;
-  //       this.memoria[this.entry].type = this.newPage.type;
-  //       this.entry++;
-  //       this.missPage++;
-  //     }
-  //   }
-  //   else {
-  //     if ( this.checkValue() ) {
-  //       this.memoria[this.replaceIndex].count++;
-  //       this.hitPage++;
-  //     }
-  //     else {
-  //       this.memoria[this.entry].number = this.newPage.number;
-  //       this.memoria[this.entry].count = 0;
-  //       this.memoria[this.entry].type = this.newPage.type;
-  //       this.entry++;
-  //       this.missPage++;
-  //     }
-  //   }
-
-  // }
-
-  /**
-   * function to generate and push one new page to memory as least frequently used
-   */
-  // lfuMemory(): void {
-  //   this.generateValue();
-
-  //   if( this.entry != this.memorySize ) {
-  //     if ( this.checkValue() ) {
-  //       this.memoria[this.replaceIndex].count++;
-  //       this.hitPage++;
-  //       console.log("hit");
-
-  //     }
-  //     else {
-  //       this.memoria[this.entry].number = this.newPage.number;
-  //       this.memoria[this.entry].count = 0;
-  //       this.memoria[this.entry].type = this.newPage.type;
-  //       this.entry++;
-  //       this.missPage++;
-
-  //     }
-  //   }
-  //   else {
-
-  //     if ( this.checkValue() ) {
-  //       this.memoria[this.replaceIndex].count++;
-  //       this.hitPage++;
-  //       console.log("hit");
-
-  //     }
-  //     else {
-  //       this.checkLeastUsed();
-
-  //       this.memoria[this.replaceIndex].number = this.newPage.number;
-  //       this.memoria[this.replaceIndex].count = 0;
-  //       this.memoria[this.replaceIndex].type = this.newPage.type;
-  //       this.missPage++;
-
-  //     }
-  //   }
-
-  // }
-
-  /**
-   * function to generate and push one new page to memory as least recently used 
-   */
-  // lruMemory(): void {
-  //   this.generateValue();
-
-  //   if( this.entry != this.memorySize ) {
-  //     if ( this.checkValue() ) {
-  //       this.memoria[this.replaceIndex].count++;
-  //       this.memoria[this.entry].time = this.newPage.time;
-  //       this.hitPage++;
-  //       console.log("hit");
-
-  //     }
-  //     else {
-  //       this.memoria[this.entry].number = this.newPage.number;
-  //       this.memoria[this.entry].count = 0;
-  //       this.memoria[this.entry].type = this.newPage.type;
-  //       this.memoria[this.entry].time = this.newPage.time;
-  //       this.entry++;
-  //       this.missPage++;
-
-  //     }
-  //   }
-  //   else {
-
-  //     if ( this.checkValue() ) {
-  //       this.memoria[this.replaceIndex].count++;
-  //       this.memoria[this.replaceIndex].time = this.newPage.time;
-  //       this.hitPage++;
-  //       console.log("hit");
-
-  //     }
-  //     else {
-  //       this.checkLastUsed();
-
-  //       this.memoria[this.replaceIndex].number = this.newPage.number;
-  //       this.memoria[this.replaceIndex].count = 0;
-  //       this.memoria[this.replaceIndex].type = this.newPage.type;
-  //       this.memoria[this.replaceIndex].time = this.newPage.time;
-  //       this.missPage++;
-
-  //     }
-  //   }
-
-  // }
   
   /**
    * function to generate and push one new page to memory as not recently used 
@@ -803,65 +773,6 @@ export class AppComponent {
     
   // }
 
-  /**
-   * Call n times the random function to push a single page into memory
-   * 
-   * Clear memory before start pushing new pages into memory
-   * 
-   * Display the results on table
-   */
-  // generateRandomMemory(): void {
-  //   this.cleanMemory();
-  //   for (let index = 0; index < this.loop; index++) {
-  //     this.randomMemory();      
-  //   }
-  //   this.showConsole();
-  // }
-
-  /**
-   * Call n times the FIFO function to push a single page into memory
-   * 
-   * Clear memory before start pushing new pages into memory
-   * 
-   * Display the results on table
-   */
-  // generateFIFOMemory(): void {
-  //   this.cleanMemory();
-  //   for (let index = 0; index < this.loop; index++) {
-  //     this.fifoMemory();   
-  //   }
-  //   this.showConsole();
-  // }
-
-  /**
-   * Call n times the LFU function to push a single page into memory
-   * 
-   * Clear memory before start pushing new pages into memory
-   * 
-   * Display the results on table
-   */
-  // generateLFUMemory(): void {
-  //   this.cleanMemory();
-  //   for (let index = 0; index < this.loop; index++) {
-  //     this.lfuMemory();   
-  //   }
-  //   this.showConsole();
-  // }
-
-  /**
-   * Call n times the LRU function to push a single page into memory
-   * 
-   * Clear memory before start pushing new pages into memory
-   * 
-   * Display the results on table
-   */
-  // generateLRUMemory(): void {
-  //   this.cleanMemory();
-  //   for (let index = 0; index < this.loop; index++) {
-  //     this.lruMemory();   
-  //   }
-  //   this.showConsole();
-  // }
 
   /**
    * Call n times the NRU function to push a single page into memory
