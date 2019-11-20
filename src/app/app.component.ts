@@ -423,26 +423,26 @@ export class AppComponent {
   randomMemory(): void {
     let index: number;
 
-    if( this.replaceIndex < this.file03.length ){
+    if( this.replaceIndex < this.data.length ){
 
-      this.blockInt = Math.trunc(this.file03[this.replaceIndex].number/this.blockSize);
+      this.blockInt = Math.trunc(this.data[this.replaceIndex].number/this.blockSize);
 
       index = this.blockInt % this.memorySize;
 
-      this.file03[this.replaceIndex].type == "R" ? this.read++ : this.write++;
+      this.data[this.replaceIndex].type == "R" ? this.read++ : this.write++;
       
-      if ( this.checkValue(this.file03[this.replaceIndex], index) ) {
+      if ( this.checkValue(this.data[this.replaceIndex], index) ) {
         
         this.memoria[index].count++
         this.hitPage++;
 
       } else {
 
-        this.memoria[index].number = this.file03[this.replaceIndex].number;
+        this.memoria[index].number = this.data[this.replaceIndex].number;
         this.memoria[index].bloco = this.blockInt;
         this.memoria[index].count = 0;
-        this.memoria[index].type = this.file03[this.replaceIndex].type;
-        this.memoria[index].time = this.file03[this.replaceIndex].time;
+        this.memoria[index].type = this.data[this.replaceIndex].type;
+        this.memoria[index].time = this.data[this.replaceIndex].time;
 
         this.missPage++;
 
@@ -452,24 +452,24 @@ export class AppComponent {
     else {
       this.replaceIndex = 0;
 
-      this.blockInt = Math.trunc(this.file03[this.replaceIndex].number/this.blockSize);
+      this.blockInt = Math.trunc(this.data[this.replaceIndex].number/this.blockSize);
 
       index = this.blockInt % this.memorySize;
 
-      this.file03[this.replaceIndex].type == "R" ? this.read++ : this.write++;
+      this.data[this.replaceIndex].type == "R" ? this.read++ : this.write++;
       
-      if ( this.checkValue(this.file03[this.replaceIndex], index) ) {
+      if ( this.checkValue(this.data[this.replaceIndex], index) ) {
         
         this.memoria[index].count++
         this.hitPage++;
 
       } else {
 
-        this.memoria[index].number = this.file03[this.replaceIndex].number;
+        this.memoria[index].number = this.data[this.replaceIndex].number;
         this.memoria[index].bloco = this.blockInt;
         this.memoria[index].count = 0;
-        this.memoria[index].type = this.file03[this.replaceIndex].type;
-        this.memoria[index].time = this.file03[this.replaceIndex].time;
+        this.memoria[index].type = this.data[this.replaceIndex].type;
+        this.memoria[index].time = this.data[this.replaceIndex].time;
 
         this.missPage++;
 
@@ -479,6 +479,8 @@ export class AppComponent {
   }
   insertRandom(): void {
     this.cleanMemory();
+    this.data = this.file01;
+    this.blockSize = 2;
     for (let index = 0; index < this.loop; index++) {
       this.randomMemory();
     }
